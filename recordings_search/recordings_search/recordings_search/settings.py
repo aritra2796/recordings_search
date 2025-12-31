@@ -115,11 +115,12 @@ DATABASES = {
     }
 }
 DATABASE_CONFIG = {
-    "host": "172.18.163.64",
-    "user": "app",
-    "password": "Op0@2025",
-    "database": "recordings",
+      "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME"),
     "cursorclass": pymysql.cursors.DictCursor
+
 }
 
 STATICFILES_DIRS = [
