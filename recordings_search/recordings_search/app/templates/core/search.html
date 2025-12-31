@@ -1,0 +1,128 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="card search-card">
+        <h2>Search Recordings</h2>
+
+        <form method="post" class="search-form">
+            {% csrf_token %}
+            
+
+            <div class="search-grid">
+
+                <!-- Row 1 -->
+                <div>
+                    <label>Process *</label>
+                    <select id="process" name="process" required>
+                        <option value="">Select Process</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Sub Process *</label>
+                    <select id="sub_process" name="sub_process" required>
+                        <option value="">Select Sub Process</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>From Date *</label>
+                    <input type="date" name="from_date" value="{{ today }}" required>
+                </div>
+
+                <!-- Row 2 -->
+                <div>
+                    <label>To Date *</label>
+                    <input type="date" name="to_date" value="{{ today }}" required>
+                </div>
+
+                <div>
+                    <label>Agent ID</label>
+                    <input type="text" name="agent_id">
+                </div>
+
+                <div>
+                    <label>Phone Number</label>
+                    <input type="text" name="phone_number">
+                </div>
+
+                <!-- Row 3 -->
+                <div>
+                    <label>Disposition</label>
+                    <input type="text" name="disposition">
+                </div>
+
+                <div>
+                    <label>Sub Disposition</label>
+                    <input type="text" name="sub_disposition">
+                </div>
+
+                <div>
+                    <label>Call Duration (sec)</label>
+                    <input type="number" name="call_duration">
+                </div>
+
+                <!-- Row 4 -->
+                <div>
+                    <label>Wrap Time</label>
+                    <input type="number" name="wrap_time">
+                </div>
+
+                <div>
+                    <label>CONNID</label>
+                    <input type="text" name="connid">
+                </div>
+
+                <div>
+                    <label>Unique ID</label>
+                    <input type="text" name="unique_id">
+                </div>
+
+            </div>
+
+            <!-- Button -->
+            <div class="search-actions">
+                <button type="submit">Search</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    fetch("/api/processes/")
+        .then(res => res.json())
+        .then(data => {
+            const p = document.getElementById("process");
+            p.innerHTML = '<option value="">Select Process</option>';
+            data.forEach(item => p.innerHTML += `<option value="${item}">${item}</option>`);
+        });
+
+    document.getElementById("process").addEventListener("change", function() {
+        const process = this.value;
+        const sub = document.getElementById("sub_process");
+
+        if (!process) {
+            sub.innerHTML = '<option value="">Select Sub Process</option>';
+            return;
+        }
+
+        sub.innerHTML = '<option value="">Loading...</option>';
+
+        fetch(`/api/subprocesses/?process=${encodeURIComponent(process)}`)
+            .then(res => res.json())
+            .then(data => {
+                sub.innerHTML = '<option value="">Select Sub Process</option>';
+                data.forEach(item => sub.innerHTML += `<option value="${item}">${item}</option>`);
+            });
+    });
+
+});
+</script>
+{% endblock %}

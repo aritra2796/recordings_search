@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="card results-card">
+        <h2>Search Results</h2>
+
+        {% if results %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Play</th>
+                    <th>Date</th>
+                    <th>Phone Number</th>
+                    <th>ConnID</th>
+                    <th>Process</th>
+                    <th>Sub Process</th>
+                    <th>Disposition</th>
+                    <th>Agent Name</th>
+                    <th>Call Length</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>
+                        {% if row.AudioBase64 %}
+                        <audio controls preload="none">
+                            <source src="data:audio/mpeg;base64,{{ row.AudioBase64 }}" type="audio/mpeg">
+                        </audio>
+                        {% else %}
+                        <span class="no-audio">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ row.Date }}</td>
+                    <td>{{ row.PhoneNumber }}</td>
+                    <td>{{ row.ConnID }}</td>
+                    <td>{{ row.Process }}</td>
+                    <td>{{ row.SubProcess }}</td>
+                    <td>{{ row.Disposition }}</td>
+                    <td>{{ row.AgentName }}</td>
+                    <td>{{ row.CallLength }}s</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        
+        {% if total_pages > 1 %}
+        <div class="pagination">
+
+            {% if page > 1 %}
+            <a href="?page={{ page|add:"-1" }}&{{ query_string }}">« Prev</a>
+            {% endif %}
+
+            {% for p in pages %}
+                {% if p == page %}
+                    <span class="current">{{ p }}</span>
+                {% else %}
+                    <a href="?page={{ p }}&{{ query_string }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %}
+            <a href="?page={{ page|add:"1" }}&{{ query_string }}">Next »</a>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% else %}
+        <p class="no-results">No records found.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
